@@ -1,1 +1,1 @@
-# webjars-locator-cleaner
+# webjars-cleaner-polymer
