@@ -49,11 +49,21 @@ public class PomValueExtractor {
 	 */
 	static SortedMap<String, PomDto> parseAllWebjarPomXmlFiles(SortedMap<String, String> fullPathIndex,
 			ClassLoader classLoader) {
-		return fullPathIndex.entrySet().stream().filter(e -> e.getKey().endsWith("org.webjars.bower/maven/META-INF/"))
-				.filter(e -> e.getKey().startsWith("pom.xml")).map(e -> extractStrings(e.getValue(), classLoader))
+		return fullPathIndex.entrySet().stream()
+				.filter(e -> e.getKey().endsWith("org.webjars.bower/maven/META-INF/"))
+				.filter(e -> e.getKey().startsWith("pom.xml"))
+				.map(e -> extractStrings(e.getValue(), classLoader))
 				.collect(toMap(dto -> dto.getArtifactId(), dto -> dto, throwingMerger(), TreeMap::new));
 	}
 
+	/**
+	 * @param location
+	 *            absolute path within the {@link ClassLoader}
+	 * @param classLoader
+	 *            will be used to
+	 *            {@link ClassLoader#getResourceAsStream(String)}
+	 * @return
+	 */
 	static PomDto extractStrings(String location, ClassLoader classLoader) {
 		try (InputStream inputStream = classLoader.getResourceAsStream(location)) {
 			return extractStrings(inputStream, location);
@@ -68,10 +78,12 @@ public class PomValueExtractor {
 	 * Try-with-resource so its automatically closed once we return in the
 	 * middle of the file.
 	 * 
+	 * @param it
+	 *            the responsibility of the caller to close the input stream
 	 * @param location
 	 *            just used for information in exceptions messages
 	 */
-	private static PomDto extractStrings(InputStream inputStream, String location) {
+	static PomDto extractStrings(InputStream inputStream, String location) {
 		XMLStreamReader reader = null;
 		try {
 			reader = factory.createXMLStreamReader(inputStream, "UTF-8");
@@ -124,9 +136,11 @@ public class PomValueExtractor {
 		} finally {
 			if (reader != null) {
 				try {
+					// does not close the inputStream, but helps the parser to
+					// be efficient
 					reader.close();
 				} catch (XMLStreamException e) {
-					e.printStackTrace();
+					// do nothing
 				}
 			}
 		}
