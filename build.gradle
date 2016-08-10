@@ -17,10 +17,11 @@ repositories {
 }
 
 dependencies {
-	//compile 'org.apache.logging.log4j:log4j-core:2.6.2'
-    //compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.6.2'
+	
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.6.2'
     compile 'org.webjars:webjars-locator-core:0.32-SNAPSHOT'
 
+	testCompile 'org.apache.logging.log4j:log4j-core:2.6.2'
     testCompile 'junit:junit:4.12'
     testCompile 'org.webjars.bower:github-com-PolymerElements-platinum-bluetooth:2.1.1'
     
