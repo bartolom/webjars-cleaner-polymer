@@ -9,25 +9,60 @@ import java.io.InputStream;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PomValueExtractor {
 
+	private static final Logger logger = LoggerFactory.getLogger(PomValueExtractor.class);
+	
 	/**
 	 * Considered thread safe after initialization.
 	 * <code>http://www.cowtowncoder.com/blog/archives/2006/06/entry_2.html</code>
 	 */
 	private static final XMLInputFactory factory = XMLInputFactory.newInstance();
 
+	public static Function<String, String> tolerateQualifiedReferences(
+			SortedMap<String, String> fullPathIndex) {
+		return tolerateQualifiedReferences(
+				fullPathIndex,
+				PomValueExtractor.class.getClassLoader());
+	}
+	
+	public static Function<String, String> tolerateQualifiedReferences(
+			SortedMap<String, String> fullPathIndex,
+			ClassLoader classLoader) {
+		final SortedMap<String, String> map = 
+				parseAllWebjarPomXmlFiles(fullPathIndex, classLoader).values().stream() 
+						.collect(toMap(
+								dto -> dto.getSimpleBowerId(), 
+								dto -> dto.getArtifactId(), 
+								throwingMerger(), 
+								TreeMap::new));
+		
+		if (logger.isTraceEnabled()) {
+			logger.trace("Found the following {} github that will be remapped to tolerate qualified references", map.size());
+			map.forEach((k, v) -> logger.trace("  - {} -- {}", k, v));
+		}
+		
+		return key -> map.get(key);
+	}
+	
 	/**
 	 * @see #parseAllWebjarPomXmlFiles(SortedMap, ClassLoader)
 	 */
-	static SortedMap<String, PomDto> parseAllWebjarPomXmlFiles(SortedMap<String, String> fullPathIndex) {
-		return parseAllWebjarPomXmlFiles(fullPathIndex, PomValueExtractor.class.getClassLoader());
+	static SortedMap<String, PomDto> parseAllWebjarPomXmlFiles(
+			SortedMap<String, String> fullPathIndex) {
+		return parseAllWebjarPomXmlFiles(
+				fullPathIndex, 
+				PomValueExtractor.class.getClassLoader());
 	}
 
 	/**
@@ -47,13 +82,18 @@ public class PomValueExtractor {
 	 *            should also be used here. We currently only cover the case
 	 *            with a single one.
 	 */
-	static SortedMap<String, PomDto> parseAllWebjarPomXmlFiles(SortedMap<String, String> fullPathIndex,
+	static SortedMap<String, PomDto> parseAllWebjarPomXmlFiles(
+			SortedMap<String, String> fullPathIndex,
 			ClassLoader classLoader) {
 		return fullPathIndex.entrySet().stream()
 				.filter(e -> e.getKey().endsWith("org.webjars.bower/maven/META-INF/"))
 				.filter(e -> e.getKey().startsWith("pom.xml"))
 				.map(e -> extractStrings(e.getValue(), classLoader))
-				.collect(toMap(dto -> dto.getArtifactId(), dto -> dto, throwingMerger(), TreeMap::new));
+				.collect(toMap(
+						dto -> dto.getArtifactId(), 
+						dto -> dto, 
+						throwingMerger(), 
+						TreeMap::new));
 	}
 
 	/**
