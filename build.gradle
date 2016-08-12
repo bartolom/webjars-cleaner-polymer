@@ -1,10 +1,15 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'project-report'
+apply plugin: 'maven'
 
+group = 'eu.codesociety'
+version = '0.0.1-SNAPSHOT'
+	
 jar {
+	group = 'eu.codesociety'
 	baseName = 'webjars-cleaner-polymer'
-	version = '0.0.1-SNAPSHOT'
+	
 }
 
 sourceCompatibility = 1.8
@@ -18,7 +23,7 @@ repositories {
 
 dependencies {
 	
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.6.2'
+    compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'org.webjars:webjars-locator-core:0.32-SNAPSHOT'
 
 	testCompile 'org.apache.logging.log4j:log4j-core:2.6.2'
