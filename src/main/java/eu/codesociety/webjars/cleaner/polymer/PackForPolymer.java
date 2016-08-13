@@ -29,7 +29,7 @@ public class PackForPolymer implements
 			
 	private static Predicate<Entry<String, String>> demoSrcDir = 
 			e -> e.getKey().contains("/src/demo/");
-	
+			
 	/**
 	 * The PolymerElements have often test, demos and some odd classes directories
 	 * Which contain files which might be the same like the real HTML custom element

@@ -24,21 +24,29 @@ public abstract class Cleaner {
 			Predicate<Entry<String, String>> identifyViolation,
 			String info) {
 		
-		logger.info("D Filtered out due to '{}'", info);
+		logger.debug("Filtered out due to '{}'", info);
 		List<String> blacklist = map.entrySet().stream()
 				.filter(identifyPack)
 				.filter(identifyViolation)
-				.peek(e -> logger.info("  - MATCH  {}", e.getKey()))
+				.peek(e -> logger.debug("  - REMOVING {}", e.getKey()))
 				.map(Entry::getKey)
 				.collect(toList());
 				
-		return map.entrySet().stream()
+		TreeMap<String, String> result = map.entrySet().stream()
 				.filter(e -> blacklist.contains(e.getKey()) == false)
 				.collect(toMap(
 						e -> e.getKey(), 
 						e -> e.getValue(), 
 						throwingMerger(), 
 						TreeMap::new));
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Remaining for '{}'", info);
+			result.entrySet().stream()
+					.filter(identifyPack)
+					.forEach(e -> logger.debug("  - KEEPING  {}", e.getKey()));
+		}
+		return result;
 	}
 	
 	/**
