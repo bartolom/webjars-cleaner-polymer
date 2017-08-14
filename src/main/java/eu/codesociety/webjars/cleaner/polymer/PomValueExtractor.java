@@ -18,6 +18,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.webjars.WebJarAssetLocator;
 
 public class PomValueExtractor {
 
@@ -97,12 +98,14 @@ public class PomValueExtractor {
 	}
 
 	/**
+	 * Try-with-resource so its automatically closed once we return in the
+	 * middle of the file. Even classpath entries might not be in in-memory.
+	 * 
 	 * @param location
 	 *            absolute path within the {@link ClassLoader}
 	 * @param classLoader
 	 *            will be used to
 	 *            {@link ClassLoader#getResourceAsStream(String)}
-	 * @return
 	 */
 	static PomDto extractStrings(String location, ClassLoader classLoader) {
 		try (InputStream inputStream = classLoader.getResourceAsStream(location)) {
@@ -114,11 +117,7 @@ public class PomValueExtractor {
 
 	/**
 	 * Extract information from a pom.xml into the {@link PomDto}.
-	 * <p>
-	 * Try-with-resource so its automatically closed once we return in the
-	 * middle of the file.
-	 * 
-	 * @param it
+	 * @param inputStream
 	 *            the responsibility of the caller to close the input stream
 	 * @param location
 	 *            just used for information in exceptions messages
