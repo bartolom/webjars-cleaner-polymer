@@ -60,7 +60,7 @@ public class PackForSaulis implements Function<SortedMap<String, String>, Sorted
 		return Cleaner.doBlacklist(
 				map,
 				entry -> entry.getKey().contains("/github-com-Saulis"),
-				PackForPolymer.polymerConvetions
+				PackForPolymer.polymerConventions
 						.or(demoData)
 						.or(metaData),
 				this.getClass().getSimpleName());

@@ -18,17 +18,21 @@ public class PackForPolymer implements
 		// WebjarFunction<SortedMap<String, String>, SortedMap<String, String>>
 {
 
-	private static Predicate<Entry<String, String>> testDirHtml = 
-			e -> e.getKey().contains(".html/test/");
+	private static Predicate<Entry<String, String>> testDir = 
+			e -> e.getKey().contains("/test/");
+			
+	private static Predicate<Entry<String, String>> testsDir = 
+			e -> e.getKey().contains("/tests/");
 	
-	private static Predicate<Entry<String, String>> classesDirHtml = 
-			e -> e.getKey().contains(".html/classes/");
+	private static Predicate<Entry<String, String>> classesDir = 
+			e -> e.getKey().contains("/classes/");
 			
-	private static Predicate<Entry<String, String>> demoDirHtml = 
-			e -> e.getKey().contains(".html/demo/");
+	private static Predicate<Entry<String, String>> demoDir = 
+			e -> e.getKey().contains("/demo/");
 			
-	private static Predicate<Entry<String, String>> demoSrcDir = 
-			e -> e.getKey().contains("/src/demo/");
+	private static Predicate<Entry<String, String>> examplesDir = 
+			e -> e.getKey().contains("/examples/");
+		
 			
 	/**
 	 * The PolymerElements have often test, demos and some odd classes directories
@@ -36,18 +40,27 @@ public class PackForPolymer implements
 	 * we are interested in.
 	 */
 	private static Predicate<Entry<String, String>> polymerDirs = 
-			testDirHtml.or(classesDirHtml).or(demoDirHtml).or(demoSrcDir);
+			testDir.or(testsDir).or(classesDir).or(demoDir).or(examplesDir);
 	
 	private static Predicate<Entry<String, String>> buildLog = 
 			e -> e.getKey().contains("build.log/");
+	
+	private static Predicate<Entry<String, String>> jsMap = 
+			e -> e.getKey().contains(".js.map/");
+	
+	private static Predicate<Entry<String, String>> esLint = 
+			e -> e.getKey().contains(".eslintrc.json/");
+	
 			
 	/**
 	 * Many third party projects follow the same conventions that the Polymer team
 	 * is using therefore we can reuse this.
 	 */
-	public static Predicate<Entry<String, String>> polymerConvetions = 
+	public static Predicate<Entry<String, String>> polymerConventions = 
 			polymerDirs
 					.or(buildLog)
+					.or(jsMap)
+					.or(esLint)
 					.or(CommonViolations.githubDocumentation)
 					.or(CommonViolations.metaData);
 	
@@ -69,7 +82,7 @@ public class PackForPolymer implements
 	private static boolean identify(Entry<String, String> entry) {
 		return entry.getKey().toLowerCase().contains("/github-com-polymer")
 				|| entry.getKey().toLowerCase().contains("/polymer/webjars")
-				|| entry.getKey().toLowerCase().contains("/github-com-webcomponents-webcomponentsjs")
+				|| entry.getKey().toLowerCase().contains("/github-com-webcomponents")
 				|| entry.getKey().toLowerCase().contains("/webcomponentsjs");
 	}
 	
@@ -78,7 +91,7 @@ public class PackForPolymer implements
 		return Cleaner.doBlacklist(
 				map, 
 				PackForPolymer::identify,
-				polymerConvetions,
+				polymerConventions,
 				this.getClass().getSimpleName());
 	}
 	
