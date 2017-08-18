@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 /**
  * Covers:
  * <ul>
- *   <li>https://github.com/webcomponents/webcomponentsjs</li>
+ *   <li>https://github.com/webcomponents/*</li>
  *   <li>https://github.com/Polymer/polymer</li>
  *   <li>https://github.com/PolymerElements/*</li>
  * </ul>
