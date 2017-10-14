@@ -20,15 +20,13 @@ repositories {
 	mavenLocal()
 	jcenter()
 }
-
+    
 dependencies {
-	
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    compile 'org.webjars:webjars-locator-core:0.32-SNAPSHOT'
+    compile 'org.slf4j:slf4j-api:1.7.25'
+    compile 'org.webjars:webjars-locator-core:0.34'
 
-	testCompile 'org.apache.logging.log4j:log4j-core:2.6.2'
+	testCompile 'org.apache.logging.log4j:log4j-core:2.9.1'
     testCompile 'junit:junit:4.12'
     testCompile 'org.webjars.bower:github-com-PolymerElements-platinum-bluetooth:2.1.1'
-    
 }
 
