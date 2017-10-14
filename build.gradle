@@ -4,7 +4,7 @@ apply plugin: 'project-report'
 apply plugin: 'maven'
 
 group = 'eu.codesociety'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 	
 jar {
 	group = 'eu.codesociety'
