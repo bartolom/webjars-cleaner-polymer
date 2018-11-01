@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'project-report'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 group = 'eu.codesociety'
 version = '0.0.2-SNAPSHOT'
@@ -9,7 +9,6 @@ version = '0.0.2-SNAPSHOT'
 jar {
 	group = 'eu.codesociety'
 	baseName = 'webjars-cleaner-polymer'
-	
 }
 
 sourceCompatibility = 1.8
@@ -30,3 +29,10 @@ dependencies {
     testCompile 'org.webjars.bower:github-com-PolymerElements-platinum-bluetooth:2.1.1'
 }
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
